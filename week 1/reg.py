@@ -109,4 +109,8 @@ def main():
 # Run the main function
 if __name__ == "__main__":
     main()
+<<<<<<< HEAD
 """to finish type END at the start of a new line below"""
+=======
+"""to finish, type END at the start of a new line"""
+>>>>>>> origin/main
