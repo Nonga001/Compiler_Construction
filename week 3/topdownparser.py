@@ -19,133 +19,106 @@ parameter_list ::= IDENTIFIER (',' IDENTIFIER)*
 import re
 
 class Tokenizer:
-    def tokenize(self, source_code):
-        token_specification = [
-            ('NUMBER', r'\d+(\.\d+)?'),   # Integer or decimal number
-            ('IDENTIFIER', r'[a-zA-Z_]\w*'), # Identifiers
-            ('IF', r'if'),                  # Keyword if
-            ('ELSE', r'else'),              # Keyword else
-            ('DO', r'do'),                  # Keyword do
-            ('WHILE', r'while'),            # Keyword while
-            ('FOR', r'for'),                # Keyword for
-            ('DEF', r'def'),                # Keyword def
-            ('LPAREN', r'\('),              # Left parenthesis
-            ('RPAREN', r'\)'),              # Right parenthesis
-            ('LBRACE', r'\{'),              # Left brace
-            ('RBRACE', r'\}'),              # Right brace
-            ('SEMICOLON', r';'),            # Semicolon
-            ('ASSIGN', r'='),               # Assignment operator
-            ('EQUAL', r'=='),               # Equal to operator
-            ('LT', r'<'),                   # Less than operator
-            ('GT', r'>'),                   # Greater than operator
-            ('LEQ', r'<='),                 # Less than or equal to
-            ('GEQ', r'>='),                 # Greater than or equal to
-            ('PLUS', r'\+'),                # Plus operator
-            ('MINUS', r'-'),                # Minus operator
-            ('TIMES', r'\*'),               # Multiplication operator
-            ('DIVIDE', r'/'),               # Division operator
-            ('STRING', r'"[^"]*"'),         # String literals
-            ('WHITESPACE', r'\s+'),         # Skip whitespace
-            ('UNKNOWN', r'.'),              # Catch-all for unrecognized characters
+    def __init__(self, code):
+        self.code = code
+        self.position = 0
+        self.tokens = []
+        self.token_regex = [
+            (r'if|else|do|while|for|def|return', 'IDENTIFIER'),
+            (r'==|!=|<=|>=|>|<', 'COMPARATOR'),
+            (r'\+|-|\*|/', 'OPERATOR'),
+            (r'=', 'ASSIGN'),
+            (r'\d+(\.\d+)?', 'NUMBER'),
+            (r'[a-zA-Z_]\w*', 'IDENTIFIER'),
+            (r'\s+', None),  # Ignore whitespace
+            (r'\{', 'LBRACE'),
+            (r'\}', 'RBRACE'),
+            (r'\(', 'LPAREN'),
+            (r'\)', 'RPAREN'),
+            (r';', 'SEMICOLON'),
+            (r',', 'COMMA')  # Added comma as a token
         ]
-        tok_regex = '|'.join(f'(?P<{name}>{pattern})' for name, pattern in token_specification)
-        token_regex = re.compile(tok_regex)
-        tokens = []
 
-        for match in token_regex.finditer(source_code):
-            token_type = match.lastgroup
-            if token_type == 'WHITESPACE':
-                continue  # Skip whitespace
-            elif token_type == 'UNKNOWN':
-                raise SyntaxError(f"Unexpected character: {match.group(token_type)}")
-            token_value = match.group(token_type)
-            tokens.append((token_type, token_value))
-        return tokens
-
+    def tokenize(self):
+        while self.position < len(self.code):
+            match = None
+            for regex, token_type in self.token_regex:
+                regex = re.compile(regex)
+                match = regex.match(self.code, self.position)
+                if match:
+                    if token_type:  # Ignore None types (whitespace)
+                        self.tokens.append((token_type, match.group(0)))
+                    self.position = match.end(0)
+                    break
+            if not match:
+                raise RuntimeError(f'Unexpected character: {self.code[self.position]}')
+        return self.tokens
 
 class Parser:
     def __init__(self, tokens):
         self.tokens = tokens
         self.current_token_index = 0
-        self.current_token = self.tokens[self.current_token_index] if self.tokens else None
+
+    def current_token(self):
+        return self.tokens[self.current_token_index] if self.current_token_index < len(self.tokens) else None
+
+    def eat(self, token_type):
+        token = self.current_token()
+        if token and token[0] == token_type:
+            print(f'Matched token: {token}')
+            self.current_token_index += 1
+        else:
+            expected = token_type
+            got = token[0] if token else 'EOF'
+            raise RuntimeError(f'Syntax error: Expected token: {expected}, but got: {got}')
 
     def parse(self):
-        while self.current_token:
-            self.program()
-
-    def program(self):
-        while self.current_token:
-            self.statement()
-
-    def statement(self):
-        if self.current_token[0] == 'IF':
-            self.match('IF')
-            self.match('LPAREN')
-            self.expression()
-            self.match('RPAREN')
-            self.match('LBRACE')
-            self.statement()
-            self.match('RBRACE')
-            if self.current_token and self.current_token[0] == 'ELSE':
-                self.match('ELSE')
-                self.match('LBRACE')
+        while self.current_token_index < len(self.tokens):
+            token = self.current_token()
+            if token[0] == 'IDENTIFIER' and token[1] == 'if':
+                self.eat('IDENTIFIER')
+                self.eat('LPAREN')
+                self.expression()
+                self.eat('RPAREN')
+                self.eat('LBRACE')
                 self.statement()
-                self.match('RBRACE')
-        elif self.current_token[0] == 'DO':
-            self.match('DO')
-            self.match('LBRACE')
-            self.statement()
-            self.match('RBRACE')
-            self.match('WHILE')
-            self.match('LPAREN')
-            self.expression()
-            self.match('RPAREN')
-        elif self.current_token[0] == 'FOR':
-            self.match('FOR')
-            self.match('LPAREN')
-            self.assignment()
-            self.expression()
-            self.match(';')
-            self.assignment()
-            self.match('RPAREN')
-            self.match('LBRACE')
-            self.statement()
-            self.match('RBRACE')
-        elif self.current_token[0] == 'IDENTIFIER':
-            self.assignment()
-        else:
-            raise SyntaxError(f"Unexpected token: {self.current_token}")
-
-    def assignment(self):
-        self.match('IDENTIFIER')
-        self.match('ASSIGN')
-        self.expression()
-        self.match('SEMICOLON')
+                self.eat('RBRACE')
+            else:
+                break
 
     def expression(self):
-        if self.current_token[0] == 'NUMBER':
-            self.match('NUMBER')
-        elif self.current_token[0] == 'IDENTIFIER':
-            self.match('IDENTIFIER')
-        else:
-            raise SyntaxError(f"Expected NUMBER or IDENTIFIER, got: {self.current_token}")
+        # Basic expression parsing (can be expanded)
+        self.eat('IDENTIFIER')
+        self.eat('COMPARATOR')
+        self.eat('NUMBER')
 
-    def match(self, expected_type):
-        if self.current_token and self.current_token[0] == expected_type:
-            print(f"Matched token: {self.current_token}")
-            self.current_token_index += 1
-            self.current_token = self.tokens[self.current_token_index] if self.current_token_index < len(self.tokens) else None
-        else:
-            raise SyntaxError(f"Expected token: {expected_type}, but got: {self.current_token}")
+    def statement(self):
+        while self.current_token() and self.current_token()[0] != 'RBRACE':
+            self.eat('IDENTIFIER')
+            self.eat('ASSIGN')
+            self.eat('NUMBER')
+            self.eat('SEMICOLON')
 
-# Main execution
-if __name__ == "__main__":
-    source_code = input("Enter Zara code:\n")
-    tokenizer = Tokenizer()
+def main():
+    print("Enter Zara code (type 'exit' to finish input):")
+    code = []
+    while True:
+        line = input()
+        if line.strip() == 'exit':
+            break
+        code.append(line)
+    full_code = '\n'.join(code)
+
     try:
-        tokens = tokenizer.tokenize(source_code)
+        tokenizer = Tokenizer(full_code)
+        tokens = tokenizer.tokenize()
+        print("Tokens:", tokens)
+
         parser = Parser(tokens)
         parser.parse()
         print("Parsing completed successfully.")
-    except SyntaxError as e:
-        print(f"Syntax error: {e}")
+    except RuntimeError as e:
+        print(e)
+
+if __name__ == '__main__':
+    main()
