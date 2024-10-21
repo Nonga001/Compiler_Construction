@@ -1,0 +1,31 @@
+# # note: using the "exit" statement to finalize everything and not line by line checking
+
+
+
+
+
+# # You can test the parser with a sample Zara code:
+
+# # zara
+# # Copy code
+
+
+# # if (x == 10) {
+# #     do {
+# #         x = x + 1;
+# #     } while (x < 5);
+# # } else {
+# #     def foo(a, b) {
+# #         return a + b;
+# #     }
+# # }
+# # for (i = 0; i < 10; i = i + 1) {
+# #     x = x - 1;
+# # }
+
+
+# # Handle Ambiguities and Conflicts
+# # In the implementation, the parser will flag syntax errors for ambiguous cases or incorrect syntax. If you want to enhance the parser further to handle conflicts, you could implement more sophisticated error recovery strategies or refine the grammar to eliminate ambiguities.
+
+# # Conclusion
+# # # This implementation provides a basic framework for a bottom-up parser for the Zara language. You can expand the grammar and the parser logic to cover more language features as needed. If you have further questions or need modifications, feel free to ask!

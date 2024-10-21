@@ -1,3 +1,8 @@
+note: using the "exit" statement to finalize everything and not line by line checking
+
+
+
+
 Explanation of the Parser
 Tokenization:
 
