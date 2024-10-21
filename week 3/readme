@@ -1,0 +1,42 @@
+Explanation of the Parser
+Tokenization:
+
+The tokenize method uses regular expressions to tokenize the source code based on the defined grammar.
+Parsing:
+
+The parse method is the entry point for parsing the entire program.
+The statement method checks the type of statement and calls the appropriate parsing method for control structures or expressions.
+The if_statement, do_while_statement, for_statement, and method_declaration methods parse their respective constructs according to the grammar rules.
+The expression and binary_expression methods handle expressions, including assignments and binary operations.
+Error Handling:
+
+The consume method checks for expected tokens and raises a SyntaxError if the token doesn't match.
+Testing the Parser
+The example Zara code provided tests various constructs, including if-else statements, a do-while loop, a for loop, and a method declaration. You can modify the zara_code string to test different scenarios, including valid and invalid syntax.
+
+Valid and Invalid Test Cases
+
+Valid Example:
+
+zara
+Copy code
+if x = 10 {
+    do {
+        x = x + 1;
+    } while x < 5;
+} else {
+    def foo(a, b) {
+        return a + b;
+    }
+}
+for (i = 0; i < 10; i = i + 1) {
+    x = x - 1;
+}
+Invalid Example:
+
+zara
+Copy code
+if x = 10 {
+    do {
+        x = x + 1;
+    } while x < 5
