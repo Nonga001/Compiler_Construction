@@ -92,7 +92,7 @@ user_input = input("Enter the Zara program (tokens separated by spaces): ")
 input_tokens = user_input.split()
 shift_reduce_parser(input_tokens)
 
-# Action table as a dictionary of dictionaries
+# Action table as a dictionary of dictionaries 
 
 
 
