@@ -1,0 +1,73 @@
+
+Expressions 
+E → E1 '+' T       { E.code = E1.code || T.code || 'ADD' }
+E → E1 '-' T       { E.code = E1.code || T.code || 'SUB' }
+E → T              { E.code = T.code }
+T → T1 '*' F       { T.code = T1.code || F.code || 'MUL' }
+T → T1 '/' F       { T.code = T1.code || F.code || 'DIV' }
+T → F              { T.code = F.code }
+F → 'id'           { F.code = 'LOAD ' || id }
+F → 'num'          { F.code = 'LOAD ' || num }
+
+
+
+
+
+the zara code is 
+
+func calculate(x, y) {
+    if (x > y) {
+        result = x - y;
+    } else {
+        result = y - x;
+    }
+    return result;
+}
+
+
+Generated Intermediate code
+
+FUNC calculate
+    LOAD x
+    LOAD y
+    GT
+    IF_FALSE GOTO L1
+    LOAD x
+    LOAD y
+    SUB
+    STORE result
+    GOTO L2
+L1:
+    LOAD y
+    LOAD x
+    SUB
+    STORE result
+L2:
+    RETURN result
+END_FUNC calculate
+
+2. Control Structures (If-Else and Loops)
+Using a similar approach, intermediate code can be generated for loops and conditional statements.
+
+If-Else Construct:
+
+S → if ( E ) S1 else S2
+    { S.code = E.code || 'IF_FALSE GOTO L1' || S1.code || 'GOTO L2' || 'L1:' || S2.code || 'L2:' }
+IF_FALSE GOTO L1 checks if the condition fails.
+GOTO L2 ensures control jumps to the end of the if-else structure.
+
+
+While Loop:
+
+S → while ( E ) S1
+    { S.code = 'L1:' || E.code || 'IF_FALSE GOTO L2' || S1.code || 'GOTO L1' || 'L2:' }
+L1 is the loop's start, while L2 is the exit point.
+IF_FALSE GOTO L2 checks the loop condition.
+
+
+3. Sub-Programs (Functions)
+For functions, use synthesized attributes for entry, argument handling, and return values.
+
+P → func id ( paramList ) { S } 
+    { P.code = 'FUNC ' || id || '\n' || paramList.code || S.code || 'RETURN\nEND_FUNC ' || id }
+The translation rule for each function generates a function header and ends with a RETURN and END_FUNC marker.
