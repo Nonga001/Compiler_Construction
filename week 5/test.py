@@ -149,3 +149,18 @@ def test_analyzer():
 
 # Run the program
 test_analyzer()
+
+
+# example input
+
+'''
+declare x int
+declare y float
+use x
+use z
+function_call myFunc x y
+array_access arr 3
+stack_operation stk
+exit
+'''
+

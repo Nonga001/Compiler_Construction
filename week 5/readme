@@ -1,0 +1,82 @@
+Semantic Analyzer Documentation for Zara Language
+
+Overview
+This semantic analyzer for the Zara programming language checks for type consistency, scope rules, and the correct usage of functions, arrays, and stacks. It prompts the user for input, processes each line of Zara code, and reports errors with specific details on where they occur (including line numbers).
+
+Key Components
+
+SymbolTable:
+Purpose: Manages variable declarations, their types, and scopes.
+Methods:
+enter_scope(): Creates a new scope for variables.
+exit_scope(): Exits the current scope.
+declare(name, type): Declares a variable with a name and type.
+lookup(name): Retrieves the type of a variable.
+check_type(name, expected_type): Checks if a variable’s type matches the expected type.
+
+TypeChecker:
+Purpose: Checks if operations (like arithmetic operations) are performed between compatible types.
+Methods:
+check_expression(expr): Checks the type consistency of an expression.
+
+ScopeChecker:
+Purpose: Ensures that variables are used only after they are declared within the current scope.
+Methods:
+check_use(name, line): Ensures a variable is declared before use.
+FunctionChecker:
+
+Purpose: Checks for valid function calls, ensuring the function is declared and the correct number of arguments are provided.
+Methods:
+check_function_call(func_name, args, line): Validates the function call.
+
+ArrayStackChecker:
+Purpose: Checks if array and stack operations are consistent with their types.
+Methods:
+check_array_usage(name, index, line): Verifies that an array is accessed with an integer index.
+check_stack_usage(name, line): Ensures a stack operation is performed on a valid stack.
+
+SemanticAnalyzer:
+Purpose: Integrates the checks from all the components (symbol table, type checking, scope checking, function checking, and array/stack checking) into a unified analyzer.
+Methods:
+analyze(code): Analyzes the provided Zara code, checking for semantic errors.
+
+Features
+Interactive Input: The analyzer prompts the user to input Zara code line by line. Typing exit signals the end of input.
+Error Reporting: Provides detailed error messages with line numbers to help the user quickly identify issues in the code.
+
+
+Supports:
+Variable declaration and scope checking.
+Type consistency for expressions.
+Function call validation with correct arguments.
+Array access with integer indices and stack operations.
+
+How to Use
+Input: The user enters Zara code interactively, one line at a time. The input can include variable declarations, function calls, and operations on arrays and stacks.
+Exit: Typing exit will finish the input and trigger the semantic analysis.
+Output: After the analysis, the program either confirms that the code is semantically correct or displays an error with the line number and description of the issue.
+
+
+Example Input:
+declare x int
+declare y float
+use x
+use z
+function_call myFunc x y
+array_access arr 3
+stack_operation stk
+exit
+Example Output:
+csharp
+Copy code
+Code is semantically correct!
+
+If an error is found, the output may look like this:
+Error: Line 4: Variable 'z' used without declaration
+
+Error Types
+Variable Not Declared: Occurs when trying to use a variable that hasn't been declared.
+Type Mismatch: Occurs when trying to perform an operation (e.g., addition or subtraction) between incompatible types.
+Incorrect Function Call: Occurs when calling a function with an incorrect number of arguments or if the function is not declared.
+Array Access Error: Occurs when trying to access an element in a non-array variable or with a non-integer index.
+Stack Operation Error: Occurs when trying to perform stack operations on a non-stack variable.
