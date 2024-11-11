@@ -1,0 +1,147 @@
+Example Input
+Here's how you might enter Zara code interactively:
+
+Assignment
+
+mathematics
+
+Enter statement type (assign, if, while, call, or 'done' to finish): assign
+Enter variable name: a
+Enter left operand: b
+Enter operator (+, -, *, /, etc.): +
+Enter right operand: c
+
+
+If-Else Condition
+
+Enter statement type (assign, if, while, call, or 'done' to finish): if
+Enter left operand of condition: a
+Enter comparison operator (==, !=, >, <, etc.): ==
+Enter right operand of condition: x
+Enter statements for the 'true' block:
+    (Repeat assignment or call statements, then enter 'done')
+Do you want an 'else' block? (yes/no): yes
+Enter statements for the 'false' block:
+    (Repeat assignment or call statements, then enter 'done')
+
+
+While Loop
+
+Enter statement type (assign, if, while, call, or 'done' to finish): while
+Enter left operand of condition: n
+Enter comparison operator (==, !=, >, <, etc.): >
+Enter right operand of condition: 0
+Enter statements for the 'while' loop body:
+    (Repeat assignment or call statements, then enter 'done')
+
+Function Call
+
+Enter statement type (assign, if, while, call, or 'done' to finish): call
+Enter function name: print
+Enter arguments separated by commas: a, x, y
+After inputting these, you would type "done" to finish, and the program will display the generated TAC based on the entered Zara statements.
+
+This interactive setup allows you to test and generate TAC for various Zara code structures. Each input is directly used to generate three-address code, offering a practical way to experiment with TAC generation.
+
+
+
+
+
+
+
+
+
+
+
+example with a while loop
+Sample Input for Loops and Conditions
+Variable Assignment:
+
+Enter statement type (assign, if, while, call, or 'done' to finish): assign
+Enter variable name: i
+Enter left operand: 0
+Enter operator (+, -, *, /, etc.): +
+Enter right operand: 0
+While Loop:
+
+
+Enter statement type (assign, if, while, call, or 'done' to finish): while
+Enter left operand of condition: i
+Enter comparison operator (==, !=, >, <, etc.): <
+Enter right operand of condition: 10
+Enter statements for the 'while' loop body:
+
+    Enter statement type (assign, if, while, call, or 'done' to finish): assign
+    Enter variable name: i
+    Enter left operand: i
+    Enter operator (+, -, *, /, etc.): +
+    Enter right operand: 1
+
+    Enter statement type (assign, if, while, call, or 'done' to finish): if
+    Enter left operand of condition: i
+    Enter comparison operator (==, !=, >, <, etc.): %
+    Enter right operand of condition: 2
+    Enter statements for the 'true' block:
+
+        Enter statement type (assign, if, while, call, or 'done' to finish): call
+        Enter function name: print
+        Enter arguments separated by commas: "i is even", i
+        
+    Enter statement type (assign, if, while, call, or 'done' to finish): done
+    
+    Do you want an 'else' block? (yes/no): yes
+    Enter statements for the 'false' block:
+
+        Enter statement type (assign, if, while, call, or 'done' to finish): call
+        Enter function name: print
+        Enter arguments separated by commas: "i is odd", i
+
+    Enter statement type (assign, if, while, call, or 'done' to finish): done
+
+Enter statement type (assign, if, while, call, or 'done' to finish): done
+Finishing the Code:
+
+
+Enter statement type (assign, if, while, call, or 'done' to finish): done
+Explanation of the Sample Input
+This sample creates a Zara program with the following structure:
+
+Initialize i to 0.
+while Loop: Runs while i < 10.
+Inside the loop:
+Increment i by 1 on each iteration.
+if Condition:
+If i is even (using a modulo check), print that i is even.
+Else, print that i is odd.
+Example of Generated TAC
+Based on the sample input, the generated three-address code (TAC) might look like this:
+
+
+i = 0
+L0:
+if not i < 10 goto L1
+t1 = i + 1
+i = t1
+t2 = i % 2
+if t2 == 0 goto L2
+param "i is odd"
+param i
+call print, 2
+goto L3
+L2:
+param "i is even"
+param i
+call print, 2
+L3:
+goto L0
+L1:
+
+
+This TAC shows the following sequence:
+
+Initializes i to 0.
+Begins a loop (L0) that continues as long as i < 10.
+Inside the loop, increments i by 1 and checks if i is even or odd.
+Prints "i is even" or "i is odd" based on the result of the modulo operation.
+Repeats until i reaches 10.
+This provides a clear demonstration of loop handling and conditional branching within the TAC generated for Zara code. 
